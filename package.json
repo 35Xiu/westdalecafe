@@ -1,6 +1,7 @@
 {
   "name": "westdale-cafe",
   "version": "1.0.0",
+  "type": "module",
   "description": "Westdale咖啡店官方网站",
   "main": "index.html",
   "scripts": {
