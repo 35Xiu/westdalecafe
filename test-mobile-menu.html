@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Menu Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .vintage-800 { background-color: #735a4a; }
+        .vintage-700 { background-color: #8b6f5f; }
+        .vintage-600 { background-color: #a18072; }
+        .vintage-100 { background-color: #f2e8e5; }
+        .vintage-200 { color: #eaddd7; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-vintage-800 text-vintage-100 shadow-lg fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div>
+                    <h1 class="text-2xl font-bold">Test Café</h1>
+                </div>
+                
+                <!-- 桌面导航 -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#" class="hover:text-gray-300">Home</a>
+                                    <a href="#" class="hover:text-gray-300">Menu</a>
+                <a href="#" class="hover:text-gray-300">Contact</a>
+                <a href="#" class="hover:text-gray-300">Shop</a>
+                </div>
+                
+                <!-- 移动端汉堡按钮 -->
+                <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg hover:bg-vintage-700 transition-colors">
+                    <svg id="mobile-menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                    <svg id="mobile-menu-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-vintage-700 border-t border-vintage-600">
+            <div class="px-4 py-2 space-y-1">
+                <a href="#" class="block px-3 py-2 text-vintage-200 hover:text-vintage-100 hover:bg-vintage-600 transition-colors rounded">Home</a>
+                <a href="#" class="block px-3 py-2 text-vintage-200 hover:text-vintage-100 hover:bg-vintage-600 transition-colors rounded">Menu</a>
+                <a href="#" class="block px-3 py-2 text-vintage-200 hover:text-vintage-100 hover:bg-vintage-600 transition-colors rounded">Contact</a>
+                <a href="#" class="block px-3 py-2 text-vintage-200 hover:text-vintage-100 hover:bg-vintage-600 transition-colors rounded">Shop</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-20 p-8">
+        <h1 class="text-3xl font-bold mb-4">Mobile Menu Test Page</h1>
+        <p class="mb-4">This page is for testing the mobile hamburger menu functionality.</p>
+        <p class="mb-4"><strong>Instructions:</strong></p>
+        <ol class="list-decimal list-inside space-y-2">
+            <li>Resize your browser window to mobile size (or use developer tools)</li>
+            <li>Click the hamburger menu button (three lines) in the top right</li>
+            <li>The menu should expand/collapse</li>
+            <li>The icon should change between hamburger and X</li>
+            <li>Check browser console for debug messages</li>
+        </ol>
+        <p class="mt-4 text-sm text-gray-600">Open browser developer tools and check the Console tab for debug messages.</p>
+    </main>
+
+    <script type="module">
+        import { initializeMobileMenu } from './js/app.js';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Test page loaded, initializing mobile menu...');
+            initializeMobileMenu();
+        });
+    </script>
+</body>
+</html> 

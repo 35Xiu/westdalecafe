@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Login - Westdale Café & Eatery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.paypalobjects.com/ncp/cart/cart.js" data-merchant-id="QPA76K82XS4TQ"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'serif': ['Crimson Text', 'serif'],
+                        'script': ['Dancing Script', 'cursive'],
+                        'body': ['Merriweather', 'serif'],
+                    },
+                    colors: {
+                        'vintage': {
+                            '50': '#fdf8f6',
+                            '100': '#f2e8e5',
+                            '200': '#eaddd7',
+                            '300': '#e0cec7',
+                            '400': '#d2bab0',
+                            '500': '#bfa094',
+                            '600': '#a18072',
+                            '700': '#8b6f5f',
+                            '800': '#735a4a',
+                            '900': '#5d483a',
+                            '950': '#2e231b',
+                        }
+                    },
+                    animation: {
+                        'gentle-float': 'gentle-float 4s ease-in-out infinite',
+                        'fade-in': 'fade-in 1s ease-out',
+                        'slide-up': 'slide-up 0.8s ease-out',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes gentle-float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .vintage-paper {
+            background: linear-gradient(45deg, #fdf8f6 25%, transparent 25%), 
+                        linear-gradient(-45deg, #fdf8f6 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f2e8e5 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f2e8e5 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+        .vintage-border {
+            border: 3px solid #8b6f5f;
+            border-image: repeating-linear-gradient(45deg, #8b6f5f, #8b6f5f 5px, #a18072 5px, #a18072 10px) 3;
+        }
+        .coffee-stain {
+            background: radial-gradient(circle, rgba(139, 111, 95, 0.1) 0%, rgba(139, 111, 95, 0.05) 70%, transparent 100%);
+        }
+        .auth-container {
+            background: rgba(253, 248, 246, 0.95);
+            backdrop-filter: blur(10px);
+            border: 3px solid #8b6f5f;
+            box-shadow: 0 20px 40px rgba(139, 111, 95, 0.2);
+        }
+        .form-input {
+            border: 2px solid #d2bab0;
+            background: rgba(253, 248, 246, 0.8);
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            border-color: #8b6f5f;
+            box-shadow: 0 0 0 3px rgba(139, 111, 95, 0.1);
+            outline: none;
+        }
+        .btn-vintage {
+            background: linear-gradient(45deg, #8b6f5f, #a18072);
+            border: 2px solid #735a4a;
+            transition: all 0.3s ease;
+        }
+        .btn-vintage:hover {
+            background: linear-gradient(45deg, #735a4a, #8b6f5f);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 111, 95, 0.3);
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #a18072;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            color: #8b6f5f;
+            border-bottom-color: #8b6f5f;
+        }
+        .tab-btn:hover {
+            color: #735a4a;
+        }
+    </style>
+</head>
+<body class="bg-vintage-50 text-vintage-900 font-body min-h-screen">
+    
+    <!-- 导航栏 -->
+    <nav class="bg-vintage-800 text-vintage-100 shadow-lg border-b-4 border-vintage-600 fixed top-0 left-0 right-0 z-[9999]">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-vintage-600 rounded-full flex items-center justify-center border-2 border-vintage-400 shadow-lg">
+                        <span class="text-vintage-100 font-script font-bold text-xl">W</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-script font-bold text-vintage-100">Westdale Café</h1>
+                        <p class="text-xs text-vintage-300 font-serif">~ Est. 2025 ~</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="index.html" class="text-vintage-200 hover:text-vintage-100 transition-colors font-serif font-semibold border-b-2 border-transparent hover:border-vintage-400">Home</a>
+                    <a href="menu.html" class="text-vintage-200 hover:text-vintage-100 transition-colors font-serif font-semibold border-b-2 border-transparent hover:border-vintage-400">Menu</a>
+                    <a href="contact.html" class="text-vintage-200 hover:text-vintage-100 transition-colors font-serif font-semibold border-b-2 border-transparent hover:border-vintage-400">Contact</a>
+                    <a href="shop.html" class="text-vintage-200 hover:text-vintage-100 transition-colors font-serif font-semibold border-b-2 border-transparent hover:border-vintage-400">Shop</a>
+                    
+                    <!-- PayPal 购物车按钮 -->
+                    <div class="flex items-center">
+                        <paypal-cart-button data-id="pp-view-cart"></paypal-cart-button>
+                    </div>
+                </div>
+                
+                <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg hover:bg-vintage-700 transition-colors">
+                    <svg id="mobile-menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                    <svg id="mobile-menu-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                         </div>
+         </div>
+         
+         <!-- 移动端导航菜单 -->
+         <div id="mobile-menu" class="md:hidden hidden bg-vintage-700 border-t border-vintage-600">
+             <div class="px-4 py-2 space-y-1">
+                                 <a href="index.html" class="block px-3 py-2 text-vintage-200 hover:text-vintage-100 hover:bg-vintage-600 transition-colors font-serif font-semibold rounded">Home</a>
+                                        <a href="menu.html" class="block px-3 py-2 text-vintage-200 hover:text-vintage-100 hover:bg-vintage-600 transition-colors font-serif font-semibold rounded">Menu</a>
+                        <a href="contact.html" class="block px-3 py-2 text-vintage-200 hover:text-vintage-100 hover:bg-vintage-600 transition-colors font-serif font-semibold rounded">Contact</a>
+                        <a href="shop.html" class="block px-3 py-2 text-vintage-200 hover:text-vintage-100 hover:bg-vintage-600 transition-colors font-serif font-semibold rounded">Shop</a>
+             </div>
+         </div>
+     </nav>
+
+     <!-- 主要内容 -->
+    <main class="flex-1 py-12 pt-32 relative">
+        <!-- 装饰性咖啡渍 -->
+        <div class="absolute top-10 right-10 w-32 h-32 coffee-stain rounded-full"></div>
+        <div class="absolute bottom-20 left-20 w-24 h-24 coffee-stain rounded-full"></div>
+        
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="auth-container rounded-lg overflow-hidden shadow-2xl animate-fade-in">
+                <div class="grid md:grid-cols-2">
+                    <!-- Logo Section -->
+                    <div class="bg-vintage-700 text-vintage-100 p-8 flex flex-col justify-center text-center">
+                        <div class="mb-6">
+                            <div class="w-20 h-20 bg-vintage-600 rounded-full flex items-center justify-center mx-auto mb-4 border-3 border-vintage-400 shadow-lg animate-gentle-float">
+                                <span class="text-vintage-100 font-script font-bold text-3xl">W</span>
+                            </div>
+                            <h1 class="text-4xl font-script font-bold mb-2">Westdale Café</h1>
+                            <p class="text-vintage-300 font-serif italic">~ Est. 2025 ~</p>
+                        </div>
+                        
+                        <!-- 装饰性分隔线 -->
+                        <div class="flex items-center justify-center mb-4">
+                            <div class="h-px bg-vintage-500 w-16"></div>
+                            <div class="mx-3 text-vintage-400">❦</div>
+                            <div class="h-px bg-vintage-500 w-16"></div>
+                        </div>
+                        
+                        <p class="text-lg font-serif leading-relaxed mb-4">
+                            Welcome to Westdale Café
+                        </p>
+                        <p class="text-vintage-300 font-serif">
+                            Taste tradition, enjoy modernity
+                        </p>
+                        
+                        <div class="mt-6 text-sm text-vintage-400 font-serif">
+                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            1004 King St W, Hamilton, ON L8S 1L1
+                        </div>
+                    </div>
+                    
+                    <!-- Form Section -->
+                    <div class="p-8 bg-vintage-50">
+                        <!-- Tabs -->
+                        <div class="text-center mb-8">
+                            <button class="tab-btn active font-serif px-6 py-3" data-tab="login">Login</button>
+                            <button class="tab-btn font-serif px-6 py-3" data-tab="register">Register</button>
+                            <button class="tab-btn font-serif px-6 py-3" data-tab="reset">Reset Password</button>
+                        </div>
+                        
+                        <!-- Alert -->
+                        <div id="alert-container" class="mb-4"></div>
+                        
+                        <!-- Login Form -->
+                        <form id="login-form" class="tab-content active">
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl font-script font-bold text-vintage-800">Login to Your Account</h3>
+                                <div class="flex items-center justify-center mt-2">
+                                    <div class="h-px bg-vintage-400 w-12"></div>
+                                    <div class="mx-2 text-vintage-600">☕</div>
+                                    <div class="h-px bg-vintage-400 w-12"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="login-email" class="block text-vintage-700 font-serif font-semibold mb-2">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                    Email Address
+                                </label>
+                                <input type="email" class="form-input w-full px-4 py-3 rounded-lg font-serif" id="login-email" required>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="login-password" class="block text-vintage-700 font-serif font-semibold mb-2">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    </svg>
+                                    Password
+                                </label>
+                                <input type="password" class="form-input w-full px-4 py-3 rounded-lg font-serif" id="login-password" required>
+                            </div>
+                            
+                            <div class="mb-6 flex items-center">
+                                <input type="checkbox" class="w-4 h-4 text-vintage-700 border-vintage-400 rounded focus:ring-vintage-600" id="remember-me">
+                                <label class="ml-2 text-vintage-700 font-serif" for="remember-me">
+                                    Remember me
+                                </label>
+                            </div>
+                            
+                            <button type="submit" class="btn-vintage w-full py-3 text-vintage-100 font-serif font-semibold rounded-lg mb-4">
+                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                                </svg>
+                                Login
+                            </button>
+                            
+                            <div class="text-center">
+                                <a href="#" class="text-vintage-600 hover:text-vintage-800 font-serif transition-colors" data-tab="reset">Forgot password?</a>
+                            </div>
+                        </form>
+                        
+                        <!-- Register Form -->
+                        <form id="register-form" class="tab-content" style="display: none;">
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl font-script font-bold text-vintage-800">Create Account</h3>
+                                <div class="flex items-center justify-center mt-2">
+                                    <div class="h-px bg-vintage-400 w-12"></div>
+                                    <div class="mx-2 text-vintage-600">☕</div>
+                                    <div class="h-px bg-vintage-400 w-12"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="register-name" class="block text-vintage-700 font-serif font-semibold mb-2">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                    Display Name
+                                </label>
+                                <input type="text" class="form-input w-full px-4 py-3 rounded-lg font-serif" id="register-name" required>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="register-email" class="block text-vintage-700 font-serif font-semibold mb-2">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                    Email Address
+                                </label>
+                                <input type="email" class="form-input w-full px-4 py-3 rounded-lg font-serif" id="register-email" required>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="register-password" class="block text-vintage-700 font-serif font-semibold mb-2">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    </svg>
+                                    Password
+                                </label>
+                                <input type="password" class="form-input w-full px-4 py-3 rounded-lg font-serif" id="register-password" required minlength="6">
+                                <div class="text-sm text-vintage-600 mt-1 font-serif">Password must be at least 6 characters long</div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="register-password-confirm" class="block text-vintage-700 font-serif font-semibold mb-2">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    </svg>
+                                    Confirm Password
+                                </label>
+                                <input type="password" class="form-input w-full px-4 py-3 rounded-lg font-serif" id="register-password-confirm" required>
+                            </div>
+                            
+                            <div class="mb-6 flex items-center">
+                                <input type="checkbox" class="w-4 h-4 text-vintage-700 border-vintage-400 rounded focus:ring-vintage-600" id="agree-terms" required>
+                                <label class="ml-2 text-vintage-700 font-serif text-sm" for="agree-terms">
+                                    I agree to the <a href="#" class="text-vintage-600 hover:text-vintage-800 underline">Terms of Service</a> and <a href="#" class="text-vintage-600 hover:text-vintage-800 underline">Privacy Policy</a>
+                                </label>
+                            </div>
+                            
+                            <button type="submit" class="btn-vintage w-full py-3 text-vintage-100 font-serif font-semibold rounded-lg mb-4">
+                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                                </svg>
+                                Register
+                            </button>
+                        </form>
+                        
+                        <!-- Reset Password Form -->
+                        <form id="reset-form" class="tab-content" style="display: none;">
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl font-script font-bold text-vintage-800">Reset Password</h3>
+                                <div class="flex items-center justify-center mt-2">
+                                    <div class="h-px bg-vintage-400 w-12"></div>
+                                    <div class="mx-2 text-vintage-600">☕</div>
+                                    <div class="h-px bg-vintage-400 w-12"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="reset-email" class="block text-vintage-700 font-serif font-semibold mb-2">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                    Email Address
+                                </label>
+                                <input type="email" class="form-input w-full px-4 py-3 rounded-lg font-serif" id="reset-email" required>
+                                <div class="text-sm text-vintage-600 mt-1 font-serif">We will send a password reset link to your email</div>
+                            </div>
+                            
+                            <button type="submit" class="btn-vintage w-full py-3 text-vintage-100 font-serif font-semibold rounded-lg mb-4">
+                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                Send Reset Link
+                            </button>
+                            
+                            <div class="text-center">
+                                <a href="#" class="text-vintage-600 hover:text-vintage-800 font-serif transition-colors" data-tab="login">Back to Login</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-vintage-950 text-vintage-300 py-8 border-t-4 border-vintage-700">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center space-y-4">
+                <div class="flex justify-center items-center space-x-4">
+                    <div class="w-8 h-8 bg-vintage-600 rounded-full flex items-center justify-center border-2 border-vintage-400">
+                        <span class="text-vintage-100 font-script font-bold">W</span>
+                    </div>
+                    <span class="text-lg font-script font-bold text-vintage-100">Westdale Café</span>
+                </div>
+                
+                <!-- 装饰性分隔线 -->
+                <div class="flex items-center justify-center">
+                    <div class="h-px bg-vintage-600 w-16"></div>
+                    <div class="mx-3 text-vintage-600">❦</div>
+                    <div class="h-px bg-vintage-600 w-16"></div>
+                </div>
+                
+                <p class="text-vintage-400 font-serif text-sm">&copy; 2025 Westdale Café. Heritage classic, heartfelt service.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { authManager } from './js/auth.js';
+        import { initializeMobileMenu } from './js/app.js';
+
+        // DOM 元素
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const alertContainer = document.getElementById('alert-container');
+        
+        // Forms
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const resetForm = document.getElementById('reset-form');
+
+        // 如果已登录，重定向到首页
+        if (authManager.isAuthenticated()) {
+            window.location.href = 'index.html';
+        }
+
+        // Tab 切换
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.dataset.tab;
+                switchTab(tabName);
+            });
+        });
+
+        // 处理链接点击
+        document.addEventListener('click', (e) => {
+            if (e.target.dataset.tab) {
+                e.preventDefault();
+                switchTab(e.target.dataset.tab);
+            }
+        });
+
+        function switchTab(tabName) {
+            // 更新按钮状态
+            tabButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tabName);
+            });
+
+            // 显示对应表单
+            tabContents.forEach(content => {
+                content.style.display = content.id === `${tabName}-form` ? 'block' : 'none';
+            });
+
+            // 清除提示信息
+            clearAlert();
+        }
+
+        // 显示提示信息
+        function showAlert(message, type = 'danger') {
+            const alertClass = type === 'success' ? 'bg-green-100 border-green-400 text-green-700' : 'bg-red-100 border-red-400 text-red-700';
+            alertContainer.innerHTML = `
+                <div class="${alertClass} px-4 py-3 rounded-lg border font-serif mb-4">
+                    <span class="block sm:inline">${message}</span>
+                    <button class="float-right ml-4 text-lg leading-none" onclick="this.parentElement.remove()">×</button>
+                </div>
+            `;
+        }
+
+        // 清除提示信息
+        function clearAlert() {
+            alertContainer.innerHTML = '';
+        }
+
+        // 登录表单处理
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<svg class="w-5 h-5 inline mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Logging in...';
+            
+            try {
+                const result = await authManager.signIn(email, password);
+                
+                if (result.success) {
+                    showAlert('Login successful! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                } else {
+                    showAlert(result.error);
+                }
+            } catch (error) {
+                showAlert('An error occurred during login, please try again');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>Login';
+            }
+        });
+
+        // 注册表单处理
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const passwordConfirm = document.getElementById('register-password-confirm').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
+            // 验证密码
+            if (password !== passwordConfirm) {
+                showAlert('Passwords do not match');
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<svg class="w-5 h-5 inline mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Registering...';
+            
+            try {
+                const result = await authManager.signUp(email, password, name);
+                
+                if (result.success) {
+                    showAlert('Registration successful! Please check your email to confirm your account.', 'success');
+                    // 清空表单
+                    registerForm.reset();
+                    // 切换到登录页面
+                    setTimeout(() => {
+                        switchTab('login');
+                    }, 2000);
+                } else {
+                    showAlert(result.error);
+                }
+            } catch (error) {
+                showAlert('An error occurred during registration, please try again');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>Register';
+            }
+        });
+
+        // 密码重置表单处理
+        resetForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('reset-email').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<svg class="w-5 h-5 inline mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Sending...';
+            
+            try {
+                const result = await authManager.resetPassword(email);
+                
+                if (result.success) {
+                    showAlert('Password reset link has been sent to your email. Please check your inbox.', 'success');
+                    resetForm.reset();
+                } else {
+                    showAlert(result.error);
+                }
+            } catch (error) {
+                showAlert('An error occurred while sending the reset link, please try again');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>Send Reset Link';
+            }
+        });
+
+        // 密码确认验证
+        document.getElementById('register-password-confirm').addEventListener('input', (e) => {
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = e.target.value;
+            
+            if (confirmPassword && password !== confirmPassword) {
+                e.target.setCustomValidity('Passwords do not match');
+            } else {
+                e.target.setCustomValidity('');
+            }
+        });
+        
+        // 页面加载时初始化移动端菜单
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeMobileMenu();
+        });
+    </script>
+    
+    <!-- PayPal 购物车初始化 -->
+    <script>
+        // 初始化 PayPal 购物车按钮
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof cartPaypal !== 'undefined') {
+                cartPaypal.Cart({ id: "pp-view-cart" });
+            } else {
+                console.warn('PayPal Cart not loaded yet, will retry...');
+                setTimeout(function() {
+                    if (typeof cartPaypal !== 'undefined') {
+                        cartPaypal.Cart({ id: "pp-view-cart" });
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html> 

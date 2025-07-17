@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Westdale Café & Eatery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.paypalobjects.com/ncp/cart/cart.js" data-merchant-id="QPA76K82XS4TQ"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'serif': ['Crimson Text', 'serif'],
+                        'script': ['Dancing Script', 'cursive'],
+                        'body': ['Merriweather', 'serif'],
+                    },
+                    colors: {
+                        'vintage': {
+                            '50': '#fdf8f6',
+                            '100': '#f2e8e5',
+                            '200': '#eaddd7',
+                            '300': '#e0cec7',
+                            '400': '#d2bab0',
+                            '500': '#bfa094',
+                            '600': '#a18072',
+                            '700': '#8b6f5f',
+                            '800': '#735a4a',
+                            '900': '#5d483a',
+                            '950': '#2e231b',
+                        }
+                    },
+                    animation: {
+                        'gentle-float': 'gentle-float 4s ease-in-out infinite',
+                        'fade-in': 'fade-in 1s ease-out',
+                        'slide-up': 'slide-up 0.8s ease-out',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes gentle-float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .vintage-paper {
+            background: linear-gradient(45deg, #fdf8f6 25%, transparent 25%), 
+                        linear-gradient(-45deg, #fdf8f6 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f2e8e5 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f2e8e5 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+        .coffee-stain {
+            background: radial-gradient(circle, rgba(139, 111, 95, 0.1) 0%, rgba(139, 111, 95, 0.05) 70%, transparent 100%);
+        }
+    </style>
+</head>
+<body class="bg-vintage-50 text-vintage-900 font-body min-h-screen">
+    
+    <!-- 导航栏 -->
+    <nav class="bg-vintage-800 text-vintage-100 shadow-lg border-b-4 border-vintage-600 fixed top-0 left-0 right-0 z-[9999]">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4 cursor-pointer" onclick="window.location.href='index.html'">
+                    <div class="w-12 h-12 bg-vintage-600 rounded-full flex items-center justify-center border-2 border-vintage-400 shadow-lg">
+                        <span class="text-vintage-100 font-script font-bold text-xl">W</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-script font-bold text-vintage-100">Westdale Café</h1>
+                        <p class="text-xs text-vintage-300 font-serif">~ Est. 2025 ~</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="index.html" class="text-vintage-200 hover:text-vintage-100 transition-colors font-serif font-semibold border-b-2 border-transparent hover:border-vintage-400">Home</a>
+                    <a href="menu.html" class="text-vintage-200 hover:text-vintage-100 transition-colors font-serif font-semibold border-b-2 border-transparent hover:border-vintage-400">Menu</a>
+                    <a href="contact.html" class="text-vintage-200 hover:text-vintage-100 transition-colors font-serif font-semibold border-b-2 border-transparent hover:border-vintage-400">Contact</a>
+                    <a href="shop.html" class="text-vintage-200 hover:text-vintage-100 transition-colors font-serif font-semibold border-b-2 border-transparent hover:border-vintage-400">Shop</a>
+                    
+                    <!-- PayPal 购物车按钮 -->
+                    <div class="flex items-center">
+                        <paypal-cart-button data-id="pp-view-cart"></paypal-cart-button>
+                    </div>
+                    
+                    <!-- 用户认证区域 -->
+                    <div id="auth-buttons" class="flex space-x-4">
+                        <a href="login.html" class="px-4 py-2 bg-vintage-600 hover:bg-vintage-500 text-vintage-100 font-serif font-semibold rounded transition-colors">
+                            Login
+                        </a>
+                        <a href="login.html" class="px-4 py-2 border border-vintage-400 text-vintage-200 hover:bg-vintage-700 hover:text-vintage-100 font-serif font-semibold rounded transition-colors">
+                            Register
+                        </a>
+                    </div>
+                    
+                    <!-- 用户菜单 -->
+                    <div id="user-menu" class="relative" style="display: none;">
+                        <button id="user-menu-button" class="flex items-center space-x-2 px-4 py-2 bg-vintage-600 hover:bg-vintage-500 text-vintage-100 font-serif font-semibold rounded transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            <span class="user-name">User</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-vintage-50 border border-vintage-300 rounded shadow-lg z-50" style="display: none;">
+                            <a href="profile.html" class="block px-4 py-2 text-vintage-700 bg-vintage-100 font-serif font-semibold">Profile</a>
+                            <a href="profile.html?tab=favorites" class="block px-4 py-2 text-vintage-700 hover:bg-vintage-100 transition-colors font-serif">Favorites</a>
+                            <hr class="border-vintage-300">
+                            <button id="logout-button" class="block w-full text-left px-4 py-2 text-vintage-700 hover:bg-vintage-100 transition-colors font-serif">Logout</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 移动端右侧按钮组 -->
+                <div class="md:hidden flex items-center space-x-3">
+
+                    
+                    <!-- 汉堡菜单按钮 -->
+                    <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg hover:bg-vintage-700 transition-colors">
+                        <svg id="mobile-menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                        <svg id="mobile-menu-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-vintage-700 border-t border-vintage-600">
+            <div class="px-4 py-2 space-y-1">
+                <a href="index.html" class="block px-3 py-2 text-vintage-200 hover:text-vintage-100 hover:bg-vintage-600 transition-colors font-serif font-semibold rounded">Home</a>
+                                        <a href="menu.html" class="block px-3 py-2 text-vintage-200 hover:text-vintage-100 hover:bg-vintage-600 transition-colors font-serif font-semibold rounded">Menu</a>
+                        <a href="contact.html" class="block px-3 py-2 text-vintage-200 hover:text-vintage-100 hover:bg-vintage-600 transition-colors font-serif font-semibold rounded">Contact</a>
+                        <a href="shop.html" class="block px-3 py-2 text-vintage-200 hover:text-vintage-100 hover:bg-vintage-600 transition-colors font-serif font-semibold rounded">Shop</a>
+                
+                <!-- 移动端用户认证区域 -->
+                <div id="mobile-auth-buttons" class="border-t border-vintage-600 pt-2 mt-2">
+                    <a href="login.html" class="block px-3 py-2 mb-2 bg-vintage-600 hover:bg-vintage-500 text-vintage-100 text-center font-serif font-semibold rounded transition-colors">
+                        Login
+                    </a>
+                    <a href="login.html" class="block px-3 py-2 border border-vintage-400 text-vintage-200 hover:bg-vintage-600 hover:text-vintage-100 text-center font-serif font-semibold rounded transition-colors">
+                        Register
+                    </a>
+                </div>
+                
+                <!-- 移动端用户菜单 -->
+                <div id="mobile-user-menu" class="border-t border-vintage-600 pt-2 mt-2" style="display: none;">
+                    <div class="flex items-center space-x-2 px-3 py-2 mb-2">
+                        <svg class="w-5 h-5 text-vintage-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <span class="mobile-user-name text-vintage-100 font-serif font-semibold">User</span>
+                    </div>
+                    <a href="profile.html" class="block px-3 py-2 text-vintage-100 bg-vintage-600 font-serif font-semibold rounded">Profile</a>
+                    <a href="profile.html?tab=favorites" class="block px-3 py-2 text-vintage-200 hover:text-vintage-100 hover:bg-vintage-600 transition-colors font-serif rounded">Favorites</a>
+                    <button id="mobile-logout-button" class="block w-full text-left px-3 py-2 text-vintage-200 hover:text-vintage-100 hover:bg-vintage-600 transition-colors font-serif rounded">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="py-12 pt-32 relative">
+        <!-- 装饰性咖啡渍 -->
+        <div class="absolute top-10 right-10 w-32 h-32 coffee-stain rounded-full"></div>
+        <div class="absolute bottom-20 left-20 w-24 h-24 coffee-stain rounded-full"></div>
+        
+        <div class="max-w-6xl mx-auto px-4">
+            <!-- 页面标题 -->
+            <div class="text-center mb-12 animate-fade-in">
+                <div class="flex items-center justify-center mb-6">
+                    <div class="h-px bg-vintage-600 w-20"></div>
+                    <h2 class="mx-6 text-4xl font-script font-bold text-vintage-800">Profile</h2>
+                    <div class="h-px bg-vintage-600 w-20"></div>
+                </div>
+                <p class="text-lg text-vintage-700 font-serif italic">Manage your account information and preferences</p>
+            </div>
+
+            <!-- 用户信息卡片 -->
+            <div class="grid lg:grid-cols-3 gap-8 mb-12">
+                <!-- 用户头像和基本信息 -->
+                <div class="lg:col-span-1">
+                    <div class="bg-vintage-100 border-2 border-vintage-300 shadow-lg p-8 text-center animate-slide-up">
+                        <div class="w-24 h-24 bg-vintage-600 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-vintage-400 shadow-lg animate-gentle-float">
+                            <span id="user-avatar" class="text-vintage-100 font-script font-bold text-3xl">U</span>
+                        </div>
+                        <h3 id="user-display-name" class="text-2xl font-script font-bold text-vintage-800 mb-2">Loading...</h3>
+                        <p id="user-email" class="text-vintage-600 font-serif mb-4">email@example.com</p>
+                        
+                        <!-- 装饰性分隔线 -->
+                        <div class="flex items-center justify-center mb-6">
+                            <div class="h-px bg-vintage-400 w-12"></div>
+                            <div class="mx-3 text-vintage-600">❦</div>
+                            <div class="h-px bg-vintage-400 w-12"></div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-vintage-700 font-serif">Join Date</span>
+                                <span id="user-join-date" class="text-vintage-600 font-serif text-sm">--</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-vintage-700 font-serif">Favorites</span>
+                                <span id="favorites-count" class="text-vintage-600 font-serif text-sm">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 标签页内容 -->
+                <div class="lg:col-span-2">
+                    <div class="bg-vintage-100 border-2 border-vintage-300 shadow-lg animate-slide-up">
+                        <!-- 标签导航 -->
+                        <div class="border-b border-vintage-300 bg-vintage-200">
+                            <nav class="flex space-x-8 px-8 py-4">
+                                <button class="tab-btn active px-4 py-2 font-serif font-semibold text-vintage-700 border-b-3 border-vintage-700" data-tab="profile">
+                                    <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                    Profile
+                                </button>
+                                <button class="tab-btn px-4 py-2 font-serif font-semibold text-vintage-600 border-b-3 border-transparent hover:text-vintage-700" data-tab="favorites">
+                                    <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                    </svg>
+                                    Favorites
+                                </button>
+                                <button class="tab-btn px-4 py-2 font-serif font-semibold text-vintage-600 border-b-3 border-transparent hover:text-vintage-700" data-tab="settings">
+                                    <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    Settings
+                                </button>
+                            </nav>
+                        </div>
+
+                        <!-- 标签内容 -->
+                        <div class="p-8">
+                            <!-- 个人信息标签 -->
+                            <div id="profile-tab" class="tab-content active">
+                                <h4 class="text-2xl font-script font-bold text-vintage-800 mb-6">Edit Profile</h4>
+                                
+                                <form id="profile-form" class="space-y-6">
+                                    <div>
+                                        <label for="display-name" class="block text-vintage-700 font-serif font-semibold mb-2">Display Name</label>
+                                        <input type="text" id="display-name" class="w-full px-4 py-3 border-2 border-vintage-300 rounded-lg font-serif focus:border-vintage-600 focus:outline-none bg-vintage-50" placeholder="Enter your display name">
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="phone" class="block text-vintage-700 font-serif font-semibold mb-2">Phone Number</label>
+                                        <input type="tel" id="phone" class="w-full px-4 py-3 border-2 border-vintage-300 rounded-lg font-serif focus:border-vintage-600 focus:outline-none bg-vintage-50" placeholder="Enter your phone number">
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="address" class="block text-vintage-700 font-serif font-semibold mb-2">Address</label>
+                                        <textarea id="address" rows="3" class="w-full px-4 py-3 border-2 border-vintage-300 rounded-lg font-serif focus:border-vintage-600 focus:outline-none bg-vintage-50" placeholder="Enter your address"></textarea>
+                                    </div>
+                                    
+                                    <div class="flex space-x-4">
+                                        <button type="submit" class="px-8 py-3 bg-vintage-700 hover:bg-vintage-800 text-vintage-100 font-serif font-semibold rounded-lg transition-colors duration-300">
+                                            Save Changes
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- 收藏夹标签 -->
+                            <div id="favorites-tab" class="tab-content" style="display: none;">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h4 class="text-2xl font-script font-bold text-vintage-800">My Favorites</h4>
+                                    <button id="refresh-favorites" class="px-4 py-2 border-2 border-vintage-600 text-vintage-700 hover:bg-vintage-600 hover:text-vintage-100 font-serif font-semibold rounded-lg transition-colors duration-300">
+                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                        </svg>
+                                        Refresh
+                                    </button>
+                                </div>
+                                
+                                <div id="favorites-container">
+                                    <!-- 收藏内容将通过JavaScript动态加载 -->
+                                    <div class="text-center py-12">
+                                        <div class="w-16 h-16 bg-vintage-300 rounded-full flex items-center justify-center mx-auto mb-4 animate-gentle-float">
+                                            <svg class="w-8 h-8 text-vintage-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                            </svg>
+                                        </div>
+                                        <p class="text-vintage-700 font-serif">Loading favorites...</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 设置标签 -->
+                            <div id="settings-tab" class="tab-content" style="display: none;">
+                                <h4 class="text-2xl font-script font-bold text-vintage-800 mb-6">Account Settings</h4>
+                                
+                                <div class="space-y-8">
+                                    <!-- 密码更改 -->
+                                    <div class="border-2 border-vintage-300 p-6 rounded-lg bg-vintage-50">
+                                        <h5 class="text-xl font-serif font-semibold text-vintage-800 mb-4">Change Password</h5>
+                                        <form id="password-form" class="space-y-4">
+                                            <div>
+                                                <label for="new-password" class="block text-vintage-700 font-serif font-semibold mb-2">New Password</label>
+                                                <input type="password" id="new-password" class="w-full px-4 py-3 border-2 border-vintage-300 rounded-lg font-serif focus:border-vintage-600 focus:outline-none bg-vintage-50" placeholder="Enter new password" minlength="6">
+                                            </div>
+                                            <div>
+                                                <label for="confirm-password" class="block text-vintage-700 font-serif font-semibold mb-2">Confirm Password</label>
+                                                <input type="password" id="confirm-password" class="w-full px-4 py-3 border-2 border-vintage-300 rounded-lg font-serif focus:border-vintage-600 focus:outline-none bg-vintage-50" placeholder="Confirm new password">
+                                            </div>
+                                            <button type="submit" class="px-6 py-2 bg-vintage-700 hover:bg-vintage-800 text-vintage-100 font-serif font-semibold rounded-lg transition-colors duration-300">
+                                                Update Password
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <!-- 账户操作 -->
+                                    <div class="border-2 border-vintage-300 p-6 rounded-lg bg-vintage-50">
+                                        <h5 class="text-xl font-serif font-semibold text-vintage-800 mb-4">Account Actions</h5>
+                                        <div class="space-y-4">
+                                            <button id="logout-all" class="w-full px-6 py-3 border-2 border-vintage-600 text-vintage-700 hover:bg-vintage-600 hover:text-vintage-100 font-serif font-semibold rounded-lg transition-colors duration-300">
+                                                Sign Out from All Devices
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+    <!-- 页脚 -->
+    <footer class="bg-vintage-950 text-vintage-300 py-8 border-t-4 border-vintage-700">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center space-y-4">
+                <div class="flex justify-center items-center space-x-4">
+                    <div class="w-8 h-8 bg-vintage-600 rounded-full flex items-center justify-center border-2 border-vintage-400">
+                        <span class="text-vintage-100 font-script font-bold">W</span>
+                    </div>
+                    <span class="text-lg font-script font-bold text-vintage-100">Westdale Café</span>
+                </div>
+                
+                <!-- 装饰性分隔线 -->
+                <div class="flex items-center justify-center">
+                    <div class="h-px bg-vintage-600 w-16"></div>
+                    <div class="mx-3 text-vintage-600">❦</div>
+                    <div class="h-px bg-vintage-600 w-16"></div>
+                </div>
+                
+                <p class="text-vintage-400 font-serif text-sm">&copy; 2025 Westdale Café. 传承经典，用心服务。</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 提示消息容器 -->
+    <div id="alert-container" class="fixed top-20 right-4 z-50"></div>
+
+    <script type="module">
+        import { authManager, favoritesManager } from './js/auth.js';
+        import { supabase } from './js/supabase-client.js';
+        import { initializeMobileMenu } from './js/app.js';
+        
+        let currentUser = null;
+
+        // DOM 元素
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userDropdown = document.getElementById('user-dropdown');
+        const logoutButton = document.getElementById('logout-button');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const profileForm = document.getElementById('profile-form');
+        const passwordForm = document.getElementById('password-form');
+        const refreshFavoritesBtn = document.getElementById('refresh-favorites');
+        const logoutAllBtn = document.getElementById('logout-all');
+
+
+
+        // 初始化页面
+        // 确保DOM完全加载后再执行
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+
+        async function checkAuth() {
+            // 等待authManager初始化
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            // 检查认证状态
+            let attempts = 0;
+            const maxAttempts = 2;
+            
+            while (attempts < maxAttempts) {
+                console.log(`认证检查尝试 ${attempts + 1}/${maxAttempts}`);
+                
+                // 检查用户登录状态
+                if (authManager && authManager.isAuthenticated()) {
+                    console.log('用户已登录，允许访问个人中心');
+                    currentUser = authManager.getCurrentUser();
+                    return true;
+                }
+                
+                attempts++;
+                
+                if (attempts < maxAttempts) {
+                    // 如果不是最后一次尝试，等待一段时间再检查
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+            }
+            
+            console.log('用户未登录，重定向到登录页面');
+            // 显示提示信息
+            alert('请先登录才能访问个人中心');
+            window.location.href = 'login.html';
+            return false;
+        }
+
+        async function init() {
+            // 首先检查认证状态
+            const isAuthenticated = await checkAuth();
+            if (!isAuthenticated) return;
+            
+            // 设置事件监听器（需要在DOM加载完成后立即设置）
+            setupEventListeners();
+            
+            await loadUserProfile();
+            await loadFavorites();
+            
+
+            
+
+            
+            // 初始化移动端菜单
+            initializeMobileMenu();
+            
+            // 检查URL参数，如果有tab参数则切换到对应标签页
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
+            if (tabParam) {
+                switchTab(tabParam);
+            }
+        }
+
+
+
+        // 加载用户资料
+        async function loadUserProfile() {
+            const user = authManager.getCurrentUser();
+            const profile = authManager.getUserProfile();
+
+            if (user) {
+                // 更新用户显示信息
+                const displayName = profile?.display_name || user.email.split('@')[0];
+                const userDisplayNameEl = document.getElementById('user-display-name');
+                const userEmailEl = document.getElementById('user-email');
+                const userAvatarEl = document.getElementById('user-avatar');
+                const userNameEl = document.querySelector('.user-name');
+                const userJoinDateEl = document.getElementById('user-join-date');
+                
+                if (userDisplayNameEl) userDisplayNameEl.textContent = displayName;
+                if (userEmailEl) userEmailEl.textContent = user.email;
+                if (userAvatarEl) userAvatarEl.textContent = displayName.charAt(0).toUpperCase();
+                if (userNameEl) userNameEl.textContent = displayName;
+                
+                // 设置注册时间
+                const joinDate = new Date(user.created_at).toLocaleDateString('en-US');
+                if (userJoinDateEl) userJoinDateEl.textContent = joinDate;
+
+                // 填充表单
+                const displayNameInput = document.getElementById('display-name');
+                const phoneInput = document.getElementById('phone');
+                const addressInput = document.getElementById('address');
+                
+                if (displayNameInput) displayNameInput.value = profile?.display_name || '';
+                if (phoneInput) phoneInput.value = profile?.phone || '';
+                if (addressInput) addressInput.value = profile?.address || '';
+            }
+        }
+
+        // 加载收藏夹
+        async function loadFavorites() {
+            const container = document.getElementById('favorites-container');
+            const favoriteCount = document.getElementById('favorites-count');
+            
+            if (!container || !favoriteCount) return;
+            
+            try {
+                const favorites = await favoritesManager.loadFavorites();
+                
+                if (favorites.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-12">
+                            <div class="w-20 h-20 bg-vintage-300 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-vintage-400">
+                                <svg class="w-10 h-10 text-vintage-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-2xl font-script font-bold text-vintage-700 mb-4">No Favorites Yet</h4>
+                            <p class="text-vintage-600 font-serif mb-6">Explore our menu and add your favorite drinks to see them here.</p>
+                            <a href="menu.html" class="inline-block bg-vintage-600 text-white px-6 py-3 rounded-lg font-serif hover:bg-vintage-700 transition-colors">
+                                Browse Menu
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = favorites.map(item => `
+                        <div class="bg-vintage-200 border-2 border-vintage-300 p-6 shadow-lg group hover:shadow-xl transition-all duration-300">
+                            <div class="relative mb-4">
+                                <img src="${item.menu_items?.image_url || '/api/placeholder/200/150'}" alt="${item.menu_items?.name}" class="w-full h-40 object-cover rounded border-2 border-vintage-400">
+                                <button onclick="removeFavorite(${item.menu_item_id})" class="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-red-600">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <h4 class="text-xl font-script font-bold text-vintage-700 mb-2">${item.menu_items?.name}</h4>
+                            <p class="text-vintage-600 font-serif text-sm mb-3">${item.menu_items?.description || 'A delicious beverage from our menu.'}</p>
+                            <p class="text-lg font-serif font-bold text-vintage-700 mb-4">$${item.menu_items?.price}</p>
+
+                        </div>
+                    `).join('');
+                }
+                
+                favoriteCount.textContent = favorites.length;
+            } catch (error) {
+                console.error('Error loading favorites:', error);
+                container.innerHTML = '<p class="text-red-600 text-center">Error loading favorites. Please try again.</p>';
+            }
+        }
+
+
+
+        // 移除收藏
+        window.removeFavorite = async function(menuItemId) {
+            if (confirm('Are you sure you want to remove this item from your favorites?')) {
+                try {
+                    await favoritesManager.removeFavorite(menuItemId);
+                    await loadFavorites();
+                    showAlert('Item removed from favorites', 'success');
+                } catch (error) {
+                    console.error('Error removing favorite:', error);
+                    showAlert('Failed to remove favorite', 'error');
+                }
+            }
+        };
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 标签切换
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabName = button.dataset.tab;
+                    switchTab(tabName);
+                });
+            });
+
+            // 表单提交
+            if (profileForm) {
+                profileForm.addEventListener('submit', handleProfileSubmit);
+            }
+
+            if (passwordForm) {
+                passwordForm.addEventListener('submit', handlePasswordSubmit);
+            }
+
+            // 其他按钮
+            if (refreshFavoritesBtn) {
+                refreshFavoritesBtn.addEventListener('click', loadFavorites);
+            }
+
+            if (logoutAllBtn) {
+                logoutAllBtn.addEventListener('click', handleLogoutAll);
+            }
+        }
+
+        // 切换标签页
+        function switchTab(tabName) {
+            // 更新按钮状态
+            tabButtons.forEach(btn => {
+                if (btn.dataset.tab === tabName) {
+                    btn.classList.add('active', 'text-vintage-700', 'border-vintage-700');
+                    btn.classList.remove('text-vintage-600', 'border-transparent');
+                } else {
+                    btn.classList.remove('active', 'text-vintage-700', 'border-vintage-700');
+                    btn.classList.add('text-vintage-600', 'border-transparent');
+                }
+            });
+
+            // 显示对应内容
+            tabContents.forEach(content => {
+                content.style.display = content.id === `${tabName}-tab` ? 'block' : 'none';
+            });
+        }
+
+        // 处理个人资料表单提交
+        async function handleProfileSubmit(e) {
+            e.preventDefault();
+            
+            const displayName = document.getElementById('display-name').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Updating...';
+            
+            try {
+                const result = await authManager.updateUserProfile({
+                    display_name: displayName,
+                    phone: phone,
+                    address: address
+                });
+                
+                if (result.success) {
+                    showAlert('Profile updated successfully', 'success');
+                    await loadUserProfile(); // 重新加载用户资料
+                } else {
+                    showAlert(result.error || 'Profile update failed', 'error');
+                }
+            } catch (error) {
+                showAlert('An error occurred during update', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        }
+
+        // 处理密码表单提交
+        async function handlePasswordSubmit(e) {
+            e.preventDefault();
+            
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (newPassword !== confirmPassword) {
+                showAlert('Passwords do not match', 'error');
+                return;
+            }
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Updating...';
+            
+            try {
+                const result = await authManager.updatePassword(newPassword);
+                
+                if (result.success) {
+                    showAlert('Password updated successfully', 'success');
+                    passwordForm.reset();
+                } else {
+                    showAlert(result.error || 'Password update failed', 'error');
+                }
+            } catch (error) {
+                showAlert('An error occurred during update', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        }
+
+        // 处理全部登出
+        async function handleLogoutAll() {
+            if (confirm('Are you sure you want to sign out from all devices?')) {
+                const result = await authManager.signOut();
+                if (result.success) {
+                    window.location.href = 'index.html';
+                }
+            }
+        }
+
+        // 处理退出登录
+        async function handleLogout() {
+            const result = await authManager.signOut();
+            if (result.success) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // 显示提示信息
+        function showAlert(message, type = 'success') {
+            const alertClass = type === 'success' ? 'bg-green-100 border-green-400 text-green-700' : 'bg-red-100 border-red-400 text-red-700';
+            const alertContainer = document.getElementById('alert-container');
+            
+            const alertHTML = `
+                <div class="${alertClass} px-6 py-4 border-2 shadow-lg animate-fade-in font-serif mb-4">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            ${type === 'success' 
+                                ? '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>'
+                                : '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>'
+                            }
+                        </svg>
+                        <span>${message}</span>
+                        <button onclick="this.parentElement.parentElement.remove()" class="ml-auto text-lg leading-none">×</button>
+                    </div>
+                </div>
+            `;
+            
+            alertContainer.insertAdjacentHTML('beforeend', alertHTML);
+            
+            // 3秒后自动移除
+            setTimeout(() => {
+                const alerts = alertContainer.children;
+                if (alerts.length > 0) {
+                    alerts[0].remove();
+                }
+            }, 3000);
+        }
+
+
+
+        // 暴露函数到全局作用域
+        window.loadFavorites = loadFavorites;
+    </script>
+    
+
+    
+    <script type="module">
+        import { authManager } from './js/auth.js';
+
+        // 页面加载时初始化用户认证状态
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 等待authManager初始化
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            // authManager 在导入时已经自动初始化
+            authManager.updateUI();
+            
+
+        });
+
+        // 用户菜单事件现在由 authManager 统一处理
+    </script>
+    
+    <!-- PayPal 购物车初始化 -->
+    <script>
+        // 初始化 PayPal 购物车按钮
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof cartPaypal !== 'undefined') {
+                cartPaypal.Cart({ id: "pp-view-cart" });
+            } else {
+                console.warn('PayPal Cart not loaded yet, will retry...');
+                setTimeout(function() {
+                    if (typeof cartPaypal !== 'undefined') {
+                        cartPaypal.Cart({ id: "pp-view-cart" });
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html> 
