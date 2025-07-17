@@ -4,6 +4,7 @@ import { supabase } from './supabase-client.js';
 class AuthManager {
     constructor() {
         this.currentUser = null;
+        this.userProfile = null;
         this.authListeners = [];
         this.init();
     }
@@ -40,7 +41,13 @@ class AuthManager {
 
     // 通知所有监听器
     notifyListeners(event, session) {
-        this.authListeners.forEach(callback => callback(event, session));
+        this.authListeners.forEach(callback => {
+            try {
+                callback(event, session);
+            } catch (error) {
+                console.error('Auth listener error:', error);
+            }
+        });
     }
 
     // 用户注册
@@ -87,9 +94,10 @@ class AuthManager {
         try {
             const { error } = await supabase.auth.signOut();
             if (error) throw error;
-            
+
             this.currentUser = null;
             this.userProfile = null;
+            
             return { success: true };
         } catch (error) {
             console.error('登出失败:', error);
@@ -100,13 +108,13 @@ class AuthManager {
     // 密码重置
     async resetPassword(email) {
         try {
-            const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: `${window.location.origin}/reset-password.html`
+            const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/login.html`
             });
 
             if (error) throw error;
 
-            return { success: true };
+            return { success: true, data };
         } catch (error) {
             console.error('密码重置失败:', error);
             return { success: false, error: error.message };
@@ -116,13 +124,13 @@ class AuthManager {
     // 更新密码
     async updatePassword(newPassword) {
         try {
-            const { error } = await supabase.auth.updateUser({
+            const { data, error } = await supabase.auth.updateUser({
                 password: newPassword
             });
 
             if (error) throw error;
 
-            return { success: true };
+            return { success: true, data };
         } catch (error) {
             console.error('密码更新失败:', error);
             return { success: false, error: error.message };
@@ -138,105 +146,77 @@ class AuthManager {
                 .from('user_profiles')
                 .select('*')
                 .eq('id', this.currentUser.id)
-                .maybeSingle(); // 使用 maybeSingle() 而不是 single()
+                .single();
 
-            if (error) {
-                console.warn('加载用户配置失败:', error);
-                // 如果表不存在或没有权限，创建一个默认配置
-                if (error.code === 'PGRST116' || error.code === '42P01' || error.message.includes('406')) {
-                    console.log('用户配置表可能未创建，使用默认配置');
-                    this.userProfile = {
-                        id: this.currentUser.id,
-                        display_name: this.currentUser.user_metadata?.display_name || this.currentUser.email?.split('@')[0] || '用户',
-                        avatar_url: null,
-                        phone: null,
-                        address: null,
-                        preferences: {}
-                    };
-                    return this.userProfile;
-                }
+            if (error && error.code !== 'PGRST116') {
                 throw error;
             }
 
-            // 如果没有找到用户配置，创建一个默认的
+            // 如果没有配置记录，创建一个
             if (!data) {
-                console.log('未找到用户配置，创建默认配置');
-                this.userProfile = {
-                    id: this.currentUser.id,
-                    display_name: this.currentUser.user_metadata?.display_name || this.currentUser.email?.split('@')[0] || '用户',
-                    avatar_url: null,
-                    phone: null,
-                    address: null,
-                    preferences: {}
-                };
-                
-                // 尝试创建用户配置记录
-                try {
-                    await this.updateUserProfile(this.userProfile);
-                } catch (createError) {
-                    console.warn('无法创建用户配置记录:', createError);
-                    // 即使创建失败，也使用默认配置
-                }
-                
-                return this.userProfile;
+                await this.createUserProfile();
+                return await this.loadUserProfile();
             }
 
             this.userProfile = data;
             return data;
         } catch (error) {
             console.error('加载用户配置失败:', error);
-            // 创建一个基本的用户配置作为备用
-            this.userProfile = {
-                id: this.currentUser.id,
-                display_name: this.currentUser.user_metadata?.display_name || this.currentUser.email?.split('@')[0] || '用户',
-                avatar_url: null,
-                phone: null,
-                address: null,
-                preferences: {}
-            };
-            return this.userProfile;
+            return null;
+        }
+    }
+
+    // 创建用户配置
+    async createUserProfile() {
+        if (!this.currentUser) return null;
+
+        try {
+            const { data, error } = await supabase
+                .from('user_profiles')
+                .insert({
+                    id: this.currentUser.id,
+                    display_name: this.currentUser.user_metadata?.display_name || 
+                                 this.currentUser.email?.split('@')[0] || 
+                                 'User',
+                    preferences: {}
+                })
+                .select()
+                .single();
+
+            if (error) throw error;
+
+            this.userProfile = data;
+            return data;
+        } catch (error) {
+            console.error('创建用户配置失败:', error);
+            return null;
         }
     }
 
     // 更新用户配置
     async updateUserProfile(profileData) {
-        if (!this.currentUser) return { success: false, error: '用户未登录' };
+        if (!this.currentUser) {
+            return { success: false, error: '用户未登录' };
+        }
 
         try {
             const { data, error } = await supabase
                 .from('user_profiles')
-                .upsert({
-                    id: this.currentUser.id,
+                .update({
                     ...profileData,
                     updated_at: new Date().toISOString()
                 })
+                .eq('id', this.currentUser.id)
                 .select()
-                .maybeSingle(); // 使用 maybeSingle() 而不是 single()
+                .single();
 
-            if (error) {
-                console.warn('更新用户配置失败:', error);
-                // 如果表不存在或没有权限，只更新内存中的配置
-                if (error.code === '42P01' || error.message.includes('406') || error.message.includes('relation') || error.message.includes('does not exist')) {
-                    console.log('用户配置表不可用，仅更新内存配置');
-                    this.userProfile = {
-                        id: this.currentUser.id,
-                        ...profileData
-                    };
-                    return { success: true, data: this.userProfile, warning: '配置仅保存在本地会话中' };
-                }
-                throw error;
-            }
+            if (error) throw error;
 
             this.userProfile = data;
             return { success: true, data };
         } catch (error) {
             console.error('更新用户配置失败:', error);
-            // 作为备用方案，至少更新内存中的配置
-            this.userProfile = {
-                id: this.currentUser.id,
-                ...profileData
-            };
-            return { success: false, error: error.message, fallback: this.userProfile };
+            return { success: false, error: error.message };
         }
     }
 
@@ -315,11 +295,10 @@ class AuthManager {
         const logoutButton = document.getElementById('logout-button');
         const mobileLogoutButton = document.getElementById('mobile-logout-button');
 
+        // 绑定用户菜单按钮点击事件
         if (userMenuButton && userDropdown) {
-            // 移除现有事件监听器（如果有的话）
             userMenuButton.removeEventListener('click', this.handleUserMenuClick);
             
-            // 绑定新的事件监听器
             this.handleUserMenuClick = (e) => {
                 e.stopPropagation();
                 const isVisible = userDropdown.style.display === 'block';
@@ -327,7 +306,7 @@ class AuthManager {
             };
             userMenuButton.addEventListener('click', this.handleUserMenuClick);
 
-            // 为所有下拉菜单中的链接添加点击事件，确保它们能正常跳转
+            // 绑定下拉菜单中的链接点击事件
             const dropdownLinks = userDropdown.querySelectorAll('a');
             dropdownLinks.forEach(link => {
                 // 移除可能存在的旧监听器
@@ -401,7 +380,7 @@ class AuthManager {
     }
 }
 
-// 用户收藏管理
+// 收藏功能管理
 export class FavoritesManager {
     constructor(authManager) {
         this.auth = authManager;
@@ -410,7 +389,7 @@ export class FavoritesManager {
     // 添加收藏
     async addFavorite(menuItemId) {
         if (!this.auth.isAuthenticated()) {
-            return { success: false, error: '用户未登录' };
+            return { success: false, error: '请先登录' };
         }
 
         try {
@@ -428,6 +407,9 @@ export class FavoritesManager {
             return { success: true, data };
         } catch (error) {
             console.error('添加收藏失败:', error);
+            if (error.code === '23505') {
+                return { success: false, error: '已经收藏过了' };
+            }
             return { success: false, error: error.message };
         }
     }
@@ -435,7 +417,7 @@ export class FavoritesManager {
     // 移除收藏
     async removeFavorite(menuItemId) {
         if (!this.auth.isAuthenticated()) {
-            return { success: false, error: '用户未登录' };
+            return { success: false, error: '请先登录' };
         }
 
         try {
@@ -454,39 +436,6 @@ export class FavoritesManager {
         }
     }
 
-    // 获取用户收藏
-    async getUserFavorites() {
-        if (!this.auth.isAuthenticated()) {
-            return { success: false, error: '用户未登录' };
-        }
-
-        try {
-            const { data, error } = await supabase
-                .from('user_favorites')
-                .select(`
-                    *,
-                    menu_items (
-                        id,
-                        name,
-                        name_en,
-                        description,
-                        price,
-                        image_url,
-                        categories (name, name_en)
-                    )
-                `)
-                .eq('user_id', this.auth.getCurrentUser().id)
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-
-            return { success: true, data };
-        } catch (error) {
-            console.error('获取收藏失败:', error);
-            return { success: false, error: error.message };
-        }
-    }
-
     // 检查是否已收藏
     async isFavorite(menuItemId) {
         if (!this.auth.isAuthenticated()) {
@@ -501,16 +450,59 @@ export class FavoritesManager {
                 .eq('menu_item_id', menuItemId)
                 .single();
 
-            return !error && data;
+            if (error && error.code !== 'PGRST116') {
+                throw error;
+            }
+
+            return !!data;
         } catch (error) {
+            console.error('检查收藏状态失败:', error);
             return false;
         }
     }
 
-    // 加载用户收藏列表（简化方法名）
+    // 获取用户收藏列表
+    async getUserFavorites() {
+        if (!this.auth.isAuthenticated()) {
+            return { success: false, error: '请先登录' };
+        }
+
+        try {
+            const { data, error } = await supabase
+                .from('user_favorites')
+                .select(`
+                    id,
+                    menu_item_id,
+                    created_at,
+                    menu_items (
+                        id,
+                        name,
+                        description,
+                        price,
+                        category
+                    )
+                `)
+                .eq('user_id', this.auth.getCurrentUser().id)
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            return { success: true, data: data || [] };
+        } catch (error) {
+            console.error('获取收藏列表失败:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // 加载收藏列表（用于页面显示）
     async loadFavorites() {
         const result = await this.getUserFavorites();
-        return result.success ? result.data : [];
+        if (result.success) {
+            return result.data;
+        } else {
+            console.error('加载收藏失败:', result.error);
+            return [];
+        }
     }
 }
 
